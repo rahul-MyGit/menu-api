@@ -12,3 +12,56 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Category {
+  id                    Int             @id @default(autoincrement())
+  name                  String          @unique
+  image                 String
+  description           String
+  taxApplicability      Boolean         @default(false)
+  tax                   Float?
+  taxType               String?
+  subCateories          SubCategory[]
+  items                 Item[]
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([name])
+}
+
+model SubCategory {
+  id                   Int              @id @default(autoincrement())
+  name                 String           @unique
+  image                String
+  description          String
+  taxApplicability     Boolean?
+  tax                  Float?
+  categoryId           Int
+  category             Category         @relation(fields: [categoryId], references: [id])
+  items                Item[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt 
+
+  @@index([name, categoryId])
+}
+
+model Item {
+  id                   Int              @id @default(autoincrement())
+  name                 String           @unique
+  description          String
+  price                Float
+  image                String
+  taxApplicability     Boolean          @default(false)
+  tax                  Float?
+  baseAmount           Float
+  discount             Float
+  totalAmount          Float
+  categoryId           Int
+  category             Category         @relation(fields: [categoryId], references: [id])          
+  subCategoryId        Int?
+  SubCategory          SubCategory?     @relation(fields: [subCategoryId], references: [id])
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([name, categoryId, subCategoryId])
+}
