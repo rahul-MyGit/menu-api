@@ -9,7 +9,7 @@ dotenv.config();
 
 app.use(express.json());
 app.use('/api/categories', categoryRoutes);
-app.use('/api/categories/:categoryId/subcategories', subCategoriesRoutes)
-app.use('/api/categories/:categoryId/subcategories/:subcateoriesId/items', itemsRoutes)
+app.use('/api/subcategories', subCategoriesRoutes)
+app.use('/api/items', itemsRoutes)
 
 export default app;
