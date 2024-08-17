@@ -33,3 +33,39 @@ export const getAllSubCategoryController = async (req: Request, res: Response) =
         res.status(500).json({ error: 'Error fetching sub-categories' });
     }
 };
+
+export const getSubCategoryByIdOrNameController = async (req: Request, res: Response) => {
+    try {
+        const { idOrName } = req.params;
+        const subCategory = await prisma.subCategory.findFirst({
+          where: {
+            OR: [
+              { id: parseInt(idOrName) || undefined },
+              { name: idOrName },
+            ],
+          },
+          include: { items: true },
+        });
+        if (subCategory) {
+          res.json(subCategory);
+        } else {
+          res.status(404).json({ error: 'Sub-category not found' });
+        }
+
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching sub-category' });
+    }
+}
+
+export const editSubCategoryController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const updatedSubCategory = await prisma.subCategory.update({
+            where: { id: parseInt(id) },
+            data: req.body,
+        });
+        res.json(updatedSubCategory);
+    } catch (error) {
+        res.status(500).json({ error: 'Error updating sub-category' });
+    }
+}
